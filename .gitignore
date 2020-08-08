@@ -2,3 +2,7 @@ __pycache__
 .pytest_cache
 fastapi_test.sqlite
 .idea
+/terraform/.terraform
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
