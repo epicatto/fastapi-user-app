@@ -1,0 +1,4 @@
+__pycache__
+.pytest_cache
+fastapi_test.sqlite
+.idea
