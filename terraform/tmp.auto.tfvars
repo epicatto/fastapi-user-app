@@ -1,0 +1,1 @@
+img_tag = "a13328f945c9aeab20b81d206f5ed8936852af71"
