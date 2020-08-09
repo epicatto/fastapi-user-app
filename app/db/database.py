@@ -6,9 +6,8 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 from app.settings import settings
 
-
 engine = create_engine(settings.SQLALCHEMY_DATABASE_URI)
-SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False))
 
 Base = declarative_base()
 
@@ -20,7 +19,7 @@ def db_session():
     try:
         yield session
         session.commit()
-    except:
+    except Exception:
         session.rollback()
         raise
     finally:
