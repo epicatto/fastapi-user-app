@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   app:
-    image: fastapi_test
+    image: fastapi_users
     hostname: app
     container_name: app
     ports:
