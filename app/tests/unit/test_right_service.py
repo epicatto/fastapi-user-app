@@ -65,7 +65,7 @@ class TestRightService:
     def test_create(self, mocker):
         right1 = create_random_right()
 
-        mocked_get_all = mocker.patch.object(RightRepository, 'get_by_name', return_value=None)
+        mocked_get_all = mocker.patch.object(RightService, 'get_by_name', return_value=None)
         mocked_create = mocker.patch.object(RightRepository, 'create', return_value=right1)
 
         data = RightCreateDTO(name="Name")
@@ -80,7 +80,7 @@ class TestRightService:
     def test_create_name_already_exists(self, mocker):
         right1 = create_random_right()
 
-        mocked_get_all = mocker.patch.object(RightRepository, 'get_by_name', return_value=right1)
+        mocked_get_all = mocker.patch.object(RightService, 'get_by_name', return_value=right1)
         mocked_create = mocker.patch.object(RightRepository, 'create')
 
         data = RightCreateDTO(name="Name")
@@ -94,8 +94,8 @@ class TestRightService:
     def test_update(self, mocker):
         right1 = create_random_right()
 
-        mocked_get_by_id = mocker.patch.object(RightRepository, 'get_by_id', return_value=right1)
-        mocked_get_by_name = mocker.patch.object(RightRepository, 'get_by_name', return_value=right1)
+        mocked_get_by_id = mocker.patch.object(RightService, 'get_by_id', return_value=right1)
+        mocked_get_by_name = mocker.patch.object(RightService, 'get_by_name', return_value=right1)
         mocked_update = mocker.patch.object(RightRepository, 'update', return_value=right1)
 
         data = RightUpdateDTO(name="Name")
@@ -111,7 +111,7 @@ class TestRightService:
     def test_update_does_not_exist(self, mocker):
         right1 = create_random_right()
 
-        mocked_get_all = mocker.patch.object(RightRepository, 'get_by_id', return_value=None)
+        mocked_get_all = mocker.patch.object(RightService, 'get_by_id', return_value=None)
         mocked_update = mocker.patch.object(RightRepository, 'update')
 
         data = RightCreateDTO(name="Name")
@@ -126,8 +126,8 @@ class TestRightService:
         right1 = create_random_right()
         right2 = create_random_right()
 
-        mocked_get_all = mocker.patch.object(RightRepository, 'get_by_id', return_value=right1)
-        mocked_get_by_name = mocker.patch.object(RightRepository, 'get_by_name', return_value=right2)
+        mocked_get_all = mocker.patch.object(RightService, 'get_by_id', return_value=right1)
+        mocked_get_by_name = mocker.patch.object(RightService, 'get_by_name', return_value=right2)
         mocked_update = mocker.patch.object(RightRepository, 'update')
 
         data = RightCreateDTO(name="Name")
@@ -142,7 +142,7 @@ class TestRightService:
     def test_delete(self, mocker):
         right1 = create_random_right()
 
-        mocked_get_all = mocker.patch.object(RightRepository, 'get_by_id', return_value=right1)
+        mocked_get_all = mocker.patch.object(RightService, 'get_by_id', return_value=right1)
         mocked_delete = mocker.patch.object(RightRepository, 'delete', return_value=right1)
 
         result = self.service.delete(right1.id)
@@ -155,7 +155,7 @@ class TestRightService:
     def test_delete_does_not_exist(self, mocker):
         right1 = create_random_right()
 
-        mocked_get_all = mocker.patch.object(RightRepository, 'get_by_id', return_value=None)
+        mocked_get_all = mocker.patch.object(RightService, 'get_by_id', return_value=None)
         mocked_delete = mocker.patch.object(RightRepository, 'delete')
 
         with pytest.raises(ValidationException):

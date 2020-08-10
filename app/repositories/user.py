@@ -28,7 +28,8 @@ class UserRepository:
         db.commit()
         return user
 
-    def update(self, db: Session, user: User, data: UserUpdateDTO) -> User:
+    def update(self, db: Session, id: int, data: UserUpdateDTO) -> User:
+        user = self.get_by_id(db, id)
         user.first_name = data.first_name
         user.last_name = data.last_name
         user.is_admin = data.is_admin
@@ -39,30 +40,28 @@ class UserRepository:
         db.refresh(user)
         return user
 
-    def delete(self, db: Session, user: User) -> Any:
+    def delete(self, db: Session, id: int) -> Any:
+        user = self.get_by_id(db, id)
         db.delete(user)
         db.commit()
 
     def get_by_email(self, db: Session, email: str) -> User:
         return db.query(User).filter(User.email == email).first()
 
-    def update_roles(self, db: Session, user: User, roles: List[Role]) -> User:
-        user.roles = roles
-
-        db.commit()
-        db.refresh(user)
-        return user
-
-    def add_roles(self, db: Session, user: User, roles: List[Role]) -> User:
-        for role in roles:
+    def add_roles(self, db: Session, id: int, role_ids: List[int]) -> User:
+        user = self.get_by_id(db, id)
+        for role_id in role_ids:
+            role = db.query(Role).get(role_id)
             user.roles.append(role)
 
         db.commit()
         db.refresh(user)
         return user
 
-    def remove_roles(self, db: Session, user: User, roles: List[Role]) -> User:
-        for role in roles:
+    def remove_roles(self, db: Session, id: int, role_ids: List[int]) -> User:
+        user = self.get_by_id(db, id)
+        for role_id in role_ids:
+            role = db.query(Role).get(role_id)
             user.roles.remove(role)
 
         db.commit()

@@ -4,10 +4,10 @@ from unittest.mock import call
 import pytest
 
 from app.config.exceptions import ValidationException
-from app.repositories.organization import OrganizationRepository
-from app.repositories.role import RoleRepository
 from app.repositories.user import UserRepository
 from app.schemas.user import UserCreateDTO, UserUpdateDTO
+from app.services.organization import OrganizationService
+from app.services.role import RoleService
 from app.services.user import UserService
 from app.tests.utils.utils import create_random_user, create_random_organization, create_random_role
 
@@ -74,15 +74,15 @@ class TestUserService:
         org = create_random_organization()
         user1 = create_random_user(organization=org)
 
-        mocked_get_all = mocker.patch.object(UserRepository, 'get_by_email', return_value=None)
+        mocked_get_by_email = mocker.patch.object(UserService, 'get_by_email', return_value=None)
+        mocked_org = mocker.patch.object(OrganizationService, 'get_by_id', return_value=org)
         mocked_create = mocker.patch.object(UserRepository, 'create', return_value=user1)
-        mocked_org = mocker.patch.object(OrganizationRepository, 'get_by_id', return_value=org)
 
         data = UserCreateDTO(email="test@test.com")
 
         result = self.service.create(data)
 
-        assert mocked_get_all.called is True
+        assert mocked_get_by_email.called is True
         assert mocked_create.called is True
         assert mocked_org.called is True
         assert result
@@ -92,7 +92,8 @@ class TestUserService:
         org = create_random_organization()
         user1 = create_random_user(organization=org)
 
-        mocked_get_all = mocker.patch.object(UserRepository, 'get_by_email', return_value=user1)
+        mocked_get_by_email = mocker.patch.object(UserService, 'get_by_email', return_value=user1)
+        mocked_org = mocker.patch.object(OrganizationService, 'get_by_id', return_value=org)
         mocked_create = mocker.patch.object(UserRepository, 'create')
 
         data = UserCreateDTO(email="test@test.com")
@@ -100,12 +101,13 @@ class TestUserService:
         with pytest.raises(ValidationException):
             self.service.create(data)
 
-        assert mocked_get_all.called is True
+        assert mocked_get_by_email.called is True
         assert mocked_create.called is False
+        assert mocked_org.called is False
 
     def test_create_org_does_not_exists(self, mocker):
-        mocked_get_all = mocker.patch.object(UserRepository, 'get_by_email', return_value=None)
-        mocked_org = mocker.patch.object(OrganizationRepository, 'get_by_id', return_value=None)
+        mocked_get_by_email = mocker.patch.object(UserService, 'get_by_email', return_value=None)
+        mocked_org = mocker.patch.object(OrganizationService, 'get_by_id', return_value=None)
         mocked_create = mocker.patch.object(UserRepository, 'create')
 
         data = UserCreateDTO(email="test@test.com")
@@ -113,7 +115,7 @@ class TestUserService:
         with pytest.raises(ValidationException):
             self.service.create(data)
 
-        assert mocked_get_all.called is True
+        assert mocked_get_by_email.called is True
         assert mocked_org.called is True
         assert mocked_create.called is False
 
@@ -121,8 +123,8 @@ class TestUserService:
         org = create_random_organization()
         user1 = create_random_user(organization=org)
 
-        mocked_get_all = mocker.patch.object(UserRepository, 'get_by_id', return_value=user1)
-        mocked_org = mocker.patch.object(OrganizationRepository, 'get_by_id', return_value=org)
+        mocked_get_all = mocker.patch.object(UserService, 'get_by_id', return_value=user1)
+        mocked_org = mocker.patch.object(OrganizationService, 'get_by_id', return_value=org)
         mocked_update = mocker.patch.object(UserRepository, 'update', return_value=user1)
 
         data = UserUpdateDTO(first_name="Name")
@@ -139,7 +141,7 @@ class TestUserService:
         org = create_random_organization()
         user1 = create_random_user(organization=org)
 
-        mocked_get_all = mocker.patch.object(UserRepository, 'get_by_id', return_value=None)
+        mocked_get_all = mocker.patch.object(UserService, 'get_by_id', return_value=None)
         mocked_update = mocker.patch.object(UserRepository, 'update')
 
         data = UserUpdateDTO(first_name="Name")
@@ -154,8 +156,8 @@ class TestUserService:
         org = create_random_organization()
         user1 = create_random_user(organization=org)
 
-        mocked_get_all = mocker.patch.object(UserRepository, 'get_by_id', return_value=user1)
-        mocked_org = mocker.patch.object(OrganizationRepository, 'get_by_id', return_value=None)
+        mocked_get_all = mocker.patch.object(UserService, 'get_by_id', return_value=user1)
+        mocked_org = mocker.patch.object(OrganizationService, 'get_by_id', return_value=None)
         mocked_create = mocker.patch.object(UserRepository, 'update')
 
         data = UserUpdateDTO(email="test@test.com")
@@ -171,7 +173,7 @@ class TestUserService:
         org = create_random_organization()
         user1 = create_random_user(organization=org)
 
-        mocked_get_all = mocker.patch.object(UserRepository, 'get_by_id', return_value=user1)
+        mocked_get_all = mocker.patch.object(UserService, 'get_by_id', return_value=user1)
         mocked_delete = mocker.patch.object(UserRepository, 'delete', return_value=user1)
 
         result = self.service.delete(user1.id)
@@ -185,7 +187,7 @@ class TestUserService:
         org = create_random_organization()
         user1 = create_random_user(organization=org)
 
-        mocked_get_all = mocker.patch.object(UserRepository, 'get_by_id', return_value=None)
+        mocked_get_all = mocker.patch.object(UserService, 'get_by_id', return_value=None)
         mocked_delete = mocker.patch.object(UserRepository, 'delete')
 
         with pytest.raises(ValidationException):
@@ -200,19 +202,19 @@ class TestUserService:
         role1 = create_random_role()
         role2 = create_random_role()
 
-        mocked_get_role = mocker.patch.object(UserRepository, 'get_by_id', return_value=user1)
-        mocked_get_rights = mocker.patch.object(RoleRepository, 'get_by_id', side_effect=[role1, role2])
+        mocked_get_user = mocker.patch.object(UserService, 'get_by_id', return_value=user1)
+        mocked_get_rights = mocker.patch.object(RoleService, 'get_by_id', side_effect=[role1, role2])
         mocked_add_roles = mocker.patch.object(UserRepository, 'add_roles', return_value=user1)
 
         result = self.service.add_roles(user1.id, [role1.id, role2.id])
 
-        assert mocked_get_role.called is True
+        assert mocked_get_user.called is True
         assert mocked_get_rights.called is True
         mocked_get_rights.assert_has_calls([
-            call(mock.ANY, role1.id),
-            call(mock.ANY, role2.id)
+            call(role1.id),
+            call(role2.id)
         ])
-        mocked_add_roles.assert_called_with(mock.ANY, user1, [role1, role2])
+        mocked_add_roles.assert_called_with(mock.ANY, user1.id, [role1.id, role2.id])
         assert result
 
     def test_add_roles_user_does_not_exist(self, mocker):
@@ -221,8 +223,8 @@ class TestUserService:
         role1 = create_random_role()
         role2 = create_random_role()
 
-        mocked_get_role = mocker.patch.object(UserRepository, 'get_by_id', return_value=None)
-        mocked_get_rights = mocker.patch.object(RoleRepository, 'get_by_id', side_effect=[role1, role2])
+        mocked_get_role = mocker.patch.object(UserService, 'get_by_id', return_value=None)
+        mocked_get_rights = mocker.patch.object(RoleService, 'get_by_id', side_effect=[role1, role2])
         mocked_add_roles = mocker.patch.object(UserRepository, 'add_roles', return_value=user1)
 
         with pytest.raises(ValidationException):
@@ -238,8 +240,8 @@ class TestUserService:
         role1 = create_random_role()
         role2 = create_random_role()
 
-        mocked_get_role = mocker.patch.object(UserRepository, 'get_by_id', return_value=user1)
-        mocked_get_rights = mocker.patch.object(RoleRepository, 'get_by_id', side_effect=[role1, None])
+        mocked_get_role = mocker.patch.object(UserService, 'get_by_id', return_value=user1)
+        mocked_get_rights = mocker.patch.object(RoleService, 'get_by_id', side_effect=[role1, None])
         mocked_add_roles = mocker.patch.object(UserRepository, 'add_roles', return_value=user1)
 
         with pytest.raises(ValidationException):
@@ -255,8 +257,8 @@ class TestUserService:
         role1 = create_random_role()
         role2 = create_random_role()
 
-        mocked_get_role = mocker.patch.object(UserRepository, 'get_by_id', return_value=user1)
-        mocked_get_rights = mocker.patch.object(RoleRepository, 'get_by_id', side_effect=[role1, role2])
+        mocked_get_role = mocker.patch.object(UserService, 'get_by_id', return_value=user1)
+        mocked_get_rights = mocker.patch.object(RoleService, 'get_by_id', side_effect=[role1, role2])
         mocked_remove_roles = mocker.patch.object(UserRepository, 'remove_roles', return_value=user1)
 
         result = self.service.remove_roles(user1.id, [role1.id, role2.id])
@@ -264,10 +266,10 @@ class TestUserService:
         assert mocked_get_role.called is True
         assert mocked_get_rights.called is True
         mocked_get_rights.assert_has_calls([
-            call(mock.ANY, role1.id),
-            call(mock.ANY, role2.id)
+            call(role1.id),
+            call(role2.id)
         ])
-        mocked_remove_roles.assert_called_with(mock.ANY, user1, [role1, role2])
+        mocked_remove_roles.assert_called_with(mock.ANY, user1.id, [role1.id, role2.id])
         assert result
 
     def test_remove_roles_role_does_not_exist(self, mocker):
@@ -276,8 +278,8 @@ class TestUserService:
         role1 = create_random_role()
         role2 = create_random_role()
 
-        mocked_get_role = mocker.patch.object(UserRepository, 'get_by_id', return_value=None)
-        mocked_get_rights = mocker.patch.object(RoleRepository, 'get_by_id', side_effect=[role1, role2])
+        mocked_get_role = mocker.patch.object(UserService, 'get_by_id', return_value=None)
+        mocked_get_rights = mocker.patch.object(RoleService, 'get_by_id', side_effect=[role1, role2])
         mocked_remove_roles = mocker.patch.object(UserRepository, 'remove_roles', return_value=role1)
 
         with pytest.raises(ValidationException):
@@ -293,8 +295,8 @@ class TestUserService:
         role1 = create_random_role()
         role2 = create_random_role()
 
-        mocked_get_role = mocker.patch.object(UserRepository, 'get_by_id', return_value=user1)
-        mocked_get_rights = mocker.patch.object(RoleRepository, 'get_by_id', side_effect=[role1, None])
+        mocked_get_role = mocker.patch.object(UserService, 'get_by_id', return_value=user1)
+        mocked_get_rights = mocker.patch.object(RoleService, 'get_by_id', side_effect=[role1, None])
         mocked_remove_roles = mocker.patch.object(UserRepository, 'remove_roles', return_value=role1)
 
         with pytest.raises(ValidationException):

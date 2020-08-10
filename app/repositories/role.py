@@ -29,7 +29,8 @@ class RoleRepository:
         db.commit()
         return role
 
-    def update(self, db: Session, role: Role, data: RoleUpdateDTO) -> Role:
+    def update(self, db: Session, id: int, data: RoleUpdateDTO) -> Role:
+        role = self.get_by_id(db, id)
         role.name = data.name
         role.description = data.description
         role.modified_date_time = datetime.utcnow()
@@ -38,20 +39,25 @@ class RoleRepository:
         db.refresh(role)
         return role
 
-    def delete(self, db: Session, role: Role) -> Any:
+    def delete(self, db: Session, id: int) -> Any:
+        role = self.get_by_id(db, id)
         db.delete(role)
         db.commit()
 
-    def add_rights(self, db: Session, role: Role, rights: List[Right]):
-        for right in rights:
+    def add_rights(self, db: Session, id: int, right_ids: List[int]):
+        role = self.get_by_id(db, id)
+        for right_id in right_ids:
+            right = db.query(Right).get(right_id)
             role.rights.append(right)
 
         db.commit()
         db.refresh(role)
         return role
 
-    def remove_rights(self, db: Session, role: Role, rights: List[Right]):
-        for right in rights:
+    def remove_rights(self, db: Session, id: int, right_ids: List[int]):
+        role = self.get_by_id(db, id)
+        for right_id in right_ids:
+            right = db.query(Right).get(right_id)
             role.rights.remove(right)
 
         db.commit()

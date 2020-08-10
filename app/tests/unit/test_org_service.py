@@ -65,7 +65,7 @@ class TestOrganizationService:
     def test_create(self, mocker):
         org1 = create_random_organization()
 
-        mocked_get_all = mocker.patch.object(OrganizationRepository, 'get_by_name', return_value=None)
+        mocked_get_all = mocker.patch.object(OrganizationService, 'get_by_name', return_value=None)
         mocked_create = mocker.patch.object(OrganizationRepository, 'create', return_value=org1)
 
         data = OrganizationCreateDTO(name="Name")
@@ -80,7 +80,7 @@ class TestOrganizationService:
     def test_create_name_already_exists(self, mocker):
         org1 = create_random_organization()
 
-        mocked_get_all = mocker.patch.object(OrganizationRepository, 'get_by_name', return_value=org1)
+        mocked_get_all = mocker.patch.object(OrganizationService, 'get_by_name', return_value=org1)
         mocked_create = mocker.patch.object(OrganizationRepository, 'create')
 
         data = OrganizationCreateDTO(name="Name")
@@ -94,7 +94,8 @@ class TestOrganizationService:
     def test_update(self, mocker):
         org1 = create_random_organization()
 
-        mocked_get_all = mocker.patch.object(OrganizationRepository, 'get_by_id', return_value=org1)
+        mocked_get_all = mocker.patch.object(OrganizationService, 'get_by_id', return_value=org1)
+        mocked_get_by_name = mocker.patch.object(OrganizationService, 'get_by_name', return_value=org1)
         mocked_update = mocker.patch.object(OrganizationRepository, 'update', return_value=org1)
 
         data = OrganizationUpdateDTO(name="Name")
@@ -102,6 +103,7 @@ class TestOrganizationService:
         result = self.service.update(org1.id, data)
 
         assert mocked_get_all.called is True
+        assert mocked_get_by_name.called is True
         assert mocked_update.called is True
         assert result
         assert result.id == org1.id
@@ -109,7 +111,7 @@ class TestOrganizationService:
     def test_update_does_not_exist(self, mocker):
         org1 = create_random_organization()
 
-        mocked_get_all = mocker.patch.object(OrganizationRepository, 'get_by_id', return_value=None)
+        mocked_get_all = mocker.patch.object(OrganizationService, 'get_by_id', return_value=None)
         mocked_update = mocker.patch.object(OrganizationRepository, 'update')
 
         data = OrganizationCreateDTO(name="Name")
@@ -118,6 +120,23 @@ class TestOrganizationService:
             self.service.update(org1.id, data)
 
         assert mocked_get_all.called is True
+        assert mocked_update.called is False
+
+    def test_update_name_already_exists(self, mocker):
+        org1 = create_random_organization()
+        org2 = create_random_organization()
+
+        mocked_get_all = mocker.patch.object(OrganizationService, 'get_by_id', return_value=org1)
+        mocked_get_by_name = mocker.patch.object(OrganizationService, 'get_by_name', return_value=org2)
+        mocked_update = mocker.patch.object(OrganizationRepository, 'update')
+
+        data = OrganizationCreateDTO(name="Name")
+
+        with pytest.raises(ValidationException):
+            self.service.update(org1.id, data)
+
+        assert mocked_get_all.called is True
+        assert mocked_get_by_name.called is True
         assert mocked_update.called is False
 
     def test_delete(self, mocker):
