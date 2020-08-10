@@ -6,3 +6,4 @@ fastapi_test.sqlite
 terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
+.coverage
