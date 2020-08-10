@@ -33,7 +33,7 @@ def details(id: int, service: RoleService = Depends(get_service)) -> RoleDetails
 @router.delete("/{id}", name="role-delete")
 def delete(id: int, service: RoleService = Depends(get_service)) -> Any:
     """
-    Delete role.
+    Delete a role.
     """
     return service.delete(id)
 
@@ -50,7 +50,7 @@ def create(data: RoleCreateDTO, service: RoleService = Depends(get_service)) -> 
 def update(id: int, data: RoleUpdateDTO,
            service: RoleService = Depends(get_service)) -> RoleDetailsDTO:
     """
-    Update role.
+    Update a role.
     """
     return service.update(id, data)
 
@@ -59,7 +59,7 @@ def update(id: int, data: RoleUpdateDTO,
 def add_rights(id: int, right_ids: List[int],
                service: RoleService = Depends(get_service)) -> RoleDetailsDTO:
     """
-    Add roles to role.
+    Add roles to a role.
     """
     return service.add_rights(id, right_ids)
 
@@ -68,6 +68,6 @@ def add_rights(id: int, right_ids: List[int],
 def remove_rights(id: int, right_ids: List[int],
                   service: RoleService = Depends(get_service)) -> RoleDetailsDTO:
     """
-    Remove roles from role.
+    Remove roles from a role.
     """
     return service.remove_rights(id, right_ids)

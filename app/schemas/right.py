@@ -16,7 +16,7 @@ class RightDTO(BaseModel):
     @classmethod
     def from_model(cls, instance: Right):
         """
-        Convert a DB Right model instance to an RightDTO instance.
+        Convert a DB Right model instance to a RightDTO instance.
         """
         return cls(
             id=instance.id,

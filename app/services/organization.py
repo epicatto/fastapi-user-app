@@ -40,6 +40,11 @@ class OrganizationService:
             return OrganizationDetailsDTO.from_model(org)
 
     def create(self, data: OrganizationCreateDTO) -> Optional[OrganizationDetailsDTO]:
+        """
+        Creates a new organization if there is no other organization with thew given name
+        :param data: data required to create an organization
+        :return: the new organization
+        """
         org = self.get_by_name(data.name)
         if org:
             raise ValidationException("Organization already exists with the name")
@@ -48,6 +53,13 @@ class OrganizationService:
             return OrganizationDetailsDTO.from_model(self.repository.create(db, data))
 
     def update(self, id: int, data: OrganizationUpdateDTO) -> Optional[OrganizationDetailsDTO]:
+        """
+        Updates an existing organization with the given data.
+        It also checks if the given name is available to be used.
+        :param id: ID of the organization to be updated
+        :param data: new organization data
+        :return: the updated organization
+        """
         org = self.get_by_id(id)
         if not org:
             raise ValidationException("Organization %s does not exist" % id)

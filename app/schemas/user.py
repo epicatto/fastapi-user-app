@@ -17,7 +17,7 @@ class UserDTO(BaseModel):
     @classmethod
     def from_model(cls, instance: User):
         """
-        Convert a DB User model instance to an UserDTO instance.
+        Convert a DB User model instance to a UserDetailsDTO instance.
         """
         return cls(
             id=instance.id,
@@ -37,7 +37,7 @@ class UserDetailsDTO(UserDTO):
     @classmethod
     def from_model(cls, instance: User):
         """
-        Convert a DB User model instance to an UserDTO instance.
+        Convert a DB User model instance to a UserDetailsDTO instance.
         """
         from app.schemas.organization import OrganizationDTO
         return cls(

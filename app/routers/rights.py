@@ -33,7 +33,7 @@ def details(id: int, service: RightService = Depends(get_service)) -> RightDTO:
 @router.delete("/{id}", name="right-delete")
 def delete(id: int, service: RightService = Depends(get_service)) -> Any:
     """
-    Delete right.
+    Delete a right.
     """
     return service.delete(id)
 
@@ -50,6 +50,6 @@ def create(data: RightCreateDTO, service: RightService = Depends(get_service)) -
 def update(id: int, data: RightUpdateDTO,
            service: RightService = Depends(get_service)) -> RightDTO:
     """
-    Update right.
+    Update a right.
     """
     return service.update(id, data)

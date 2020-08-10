@@ -13,7 +13,10 @@ from app.routers import rights
 from app.routers import roles
 from app.routers import users
 
-app = FastAPI()
+app = FastAPI(
+    title="FastAPI - Users sample application",
+    description=""
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -57,12 +60,31 @@ app.include_router(
 
 
 @app.exception_handler(ValidationException)
-async def validation_error_handler(request: Request, exc: ValidationException):
-    code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    if isinstance(exc, ValidationException):
-        code = status.HTTP_400_BAD_REQUEST
+async def validation_exception_handler(request: Request, exc: ValidationException) -> JSONResponse:
+    """
+    Custom exception handler for ValidationException
+    This returns a JSON format message.
+    :param request:
+    :param exc:
+    :return:
+    """
     return JSONResponse(
-        status_code=code,
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content=str(exc),
+    )
+
+
+@app.exception_handler(Exception)
+async def http_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+    """
+    Default exception handler.
+    This returns a JSON format message.
+    :param request:
+    :param exc:
+    :return:
+    """
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content=str(exc),
     )
 

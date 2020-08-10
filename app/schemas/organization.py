@@ -28,7 +28,7 @@ class OrganizationDetailsDTO(OrganizationDTO):
     def from_model(cls, instance: Organization):
         from app.schemas.user import UserDTO
         """
-        Convert a DB Organization model instance to an OrganizationDTO instance.
+        Convert a DB Organization model instance to an OrganizationDetailsDTO instance.
         """
         return cls(
             id=instance.id,
