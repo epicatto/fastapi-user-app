@@ -88,6 +88,7 @@ This workflow needs some GitHub secrets to run:
  * Create an SSL certificate and attach it to the domain
  * Create a new workspace on Terraform Cloud with 'prod' environment variables and update the CICD workflow to 
  select the corresponding workspace based on the branch.
+ * Improve CICD workflow to run on changes in `feature` branches 
 
 
 
