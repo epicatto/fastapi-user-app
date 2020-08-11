@@ -40,6 +40,11 @@ class RoleService:
             return RoleDetailsDTO.from_model(role)
 
     def create(self, data: RoleCreateDTO) -> Optional[RoleDetailsDTO]:
+        """
+        Creates a new role if there is no other role with thew given name
+        :param data: data required to create a role
+        :return: the new role
+        """
         role = self.get_by_name(data.name)
         if role:
             raise ValidationException("Role already exists with the name")
@@ -48,6 +53,13 @@ class RoleService:
             return RoleDetailsDTO.from_model(self.repository.create(db, data))
 
     def update(self, id: int, data: RoleUpdateDTO) -> Optional[RoleDetailsDTO]:
+        """
+        Updates an existing role with the given data.
+        It also checks if the given name is available to be used.
+        :param id: ID of the role to be updated
+        :param data: new role data
+        :return: the updated role
+        """
         role = self.get_by_id(id)
         if not role:
             raise ValidationException("Role %s does not exist" % id)
@@ -68,6 +80,13 @@ class RoleService:
             return self.repository.delete(db, id)
 
     def add_rights(self, id: int, right_ids: List[int]) -> Optional[RoleDetailsDTO]:
+        """
+        Adds the given rights to a role.
+        The role to be updated and the given rights must exist
+        :param id: ID of the role to be updated
+        :param right_ids: list of right IDs to be removed
+        :return: the updated role
+        """
         role = self.get_by_id(id)
         if not role:
             raise ValidationException("Role %s does not exist" % id)
@@ -83,6 +102,13 @@ class RoleService:
             return RoleDetailsDTO.from_model(self.repository.add_rights(db, id, rights))
 
     def remove_rights(self, id: int, right_ids: List[int]) -> Optional[RoleDetailsDTO]:
+        """
+        Removes the given rights from a role.
+        The role to be updated and the given rights must exist
+        :param id: ID of the role to be updated
+        :param right_ids: list of right IDs to be added
+        :return: the updated role
+        """
         role = self.get_by_id(id)
         if not role:
             raise ValidationException("Role %s does not exist" % id)

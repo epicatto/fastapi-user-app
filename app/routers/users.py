@@ -32,7 +32,7 @@ def details(id: int, service: UserService = Depends(get_service)) -> UserDetails
 @router.delete("/{id}", name="user-delete")
 def delete(id: int, service: UserService = Depends(get_service)) -> Any:
     """
-    Delete user.
+    Delete a user.
     """
     return service.delete(id)
 
@@ -48,7 +48,7 @@ def create(data: UserCreateDTO, service: UserService = Depends(get_service)) -> 
 @router.put("/{id}", name="user-update", response_model=UserDetailsDTO)
 def update(id: int, data: UserUpdateDTO, service: UserService = Depends(get_service)) -> UserDetailsDTO:
     """
-    Update user.
+    Update a user.
     """
     return service.update(id, data)
 
@@ -56,7 +56,7 @@ def update(id: int, data: UserUpdateDTO, service: UserService = Depends(get_serv
 @router.put("/{id}/roles", name="user-add-roles", response_model=UserDetailsDTO)
 def add_roles(id: int, roles_ids: List[int], service: UserService = Depends(get_service)) -> UserDetailsDTO:
     """
-    Add roles to user.
+    Add roles to a user.
     """
     return service.add_roles(id, roles_ids)
 
@@ -64,6 +64,6 @@ def add_roles(id: int, roles_ids: List[int], service: UserService = Depends(get_
 @router.delete("/{id}/roles", name="user-remove-roles", response_model=UserDetailsDTO)
 def remove_roles(id: int, roles_ids: List[int], service: UserService = Depends(get_service)) -> UserDetailsDTO:
     """
-    Remove roles from user.
+    Remove roles from a user.
     """
     return service.remove_roles(id, roles_ids)

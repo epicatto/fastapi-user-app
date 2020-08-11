@@ -14,7 +14,14 @@ Base = declarative_base()
 
 @contextmanager
 def db_session():
-    """Provide a transactional scope around a series of operations."""
+    """
+    Context manager which provides transaction management for the nested
+    block. A transaction is started when the block is entered, and then either
+    committed if the block exits without incident, or rolled back if an error
+    is raised.
+    https://docs.sqlalchemy.org/en/13/orm/session_basics.html
+    :return: a scoped session
+    """
     session = SessionLocal()
     try:
         yield session

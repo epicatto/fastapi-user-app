@@ -82,7 +82,6 @@ resource "aws_ecs_service" "app-service" {
   desired_count = 1
   network_configuration {
     subnets = module.ecs-lb.subnets
-    //    security_groups = ["sg-0ca2b32deb6988a5f", "sg-0f47b279f1b726318", "sg-0892469ab595ea510"]
     security_groups = module.lookup-security-groups.ids
     assign_public_ip = true
   }
@@ -109,8 +108,6 @@ locals {
   subnet_ids = data.aws_subnet_ids.main.ids
   health_check_path = "/docs"
   certificate_arn = ""
-  //  certificate_arn   = aws_acm_certificate_validation.cert.certificate_arn
-  //  domain_name       = "flask.app.example.io"
   container_definition = jsonencode({
     "name" = "${local.app_name}-${local.environment}"
     "image" = format("%s.dkr.ecr.%s.amazonaws.com/%s:%s",
@@ -158,26 +155,3 @@ locals {
     }
   })
 }
-
-//resource "aws_acm_certificate" "cert" {
-//  domain_name       = "ezedev.io"
-//  validation_method = "DNS"
-//}
-//
-//data "aws_route53_zone" "zone" {
-//  name         = "ezedev.io."
-//  private_zone = false
-//}
-//
-//resource "aws_route53_record" "cert_validation" {
-//  name    = aws_acm_certificate.cert.domain_validation_options.0.resource_record_name
-//  type    = aws_acm_certificate.cert.domain_validation_options.0.resource_record_type
-//  zone_id = data.aws_route53_zone.zone.zone_id
-//  records = [aws_acm_certificate.cert.domain_validation_options.0.resource_record_value]
-//  ttl     = 60
-//}
-//
-//resource "aws_acm_certificate_validation" "cert" {
-//  certificate_arn         = aws_acm_certificate.cert.arn
-//  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
-//}

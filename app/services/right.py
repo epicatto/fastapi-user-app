@@ -39,6 +39,11 @@ class RightService:
             return RightDTO.from_model(right)
 
     def create(self, data: RightCreateDTO) -> Optional[RightDTO]:
+        """
+        Creates a new right if there is no other right with thew given name
+        :param data: data required to create a right
+        :return: the new right
+        """
         right = self.get_by_name(data.name)
         if right:
             raise ValidationException("Right already exists with the name")
@@ -47,6 +52,13 @@ class RightService:
             return RightDTO.from_model(self.repository.create(db, data))
 
     def update(self, id: int, data: RightUpdateDTO) -> Optional[RightDTO]:
+        """
+        Updates an existing right with the given data.
+        It also checks if the given name is available to be used.
+        :param id: ID of the right to be updated
+        :param data: new right data
+        :return: the updated right
+        """
         right = self.get_by_id(id)
         if not right:
             raise ValidationException("Right %s does not exist" % id)

@@ -17,7 +17,7 @@ class RoleDTO(BaseModel):
     @classmethod
     def from_model(cls, instance: Role):
         """
-        Convert a DB Role model instance to an RoleDTO instance.
+        Convert a DB Role model instance to a RoleDTO instance.
         """
         return cls(
             id=instance.id,
@@ -34,7 +34,7 @@ class RoleDetailsDTO(RoleDTO):
     @classmethod
     def from_model(cls, instance: Role):
         """
-        Convert a DB Role model instance to an RoleDTO instance.
+        Convert a DB Role model instance to a RoleDetailsDTO instance.
         """
         return cls(
             id=instance.id,

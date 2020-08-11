@@ -42,6 +42,12 @@ class UserService:
             return UserDetailsDTO.from_model(user)
 
     def create(self, data: UserCreateDTO) -> Optional[UserDetailsDTO]:
+        """
+        Creates a new user if there is no other user with thew given email
+        The given organization must exist
+        :param data: data required to create a user
+        :return: the new user
+        """
         user = self.get_by_email(data.email)
         if user:
             raise ValidationException("Email is not available")
@@ -54,6 +60,14 @@ class UserService:
             return UserDetailsDTO.from_model(self.repository.create(db, data))
 
     def update(self, id: int, data: UserUpdateDTO) -> Optional[UserDetailsDTO]:
+        """
+        Updates an existing user with the given data.
+        It also checks if the given email is available to be used.
+        The given organization must exist.
+        :param id: ID of the user to be updated
+        :param data: new user data
+        :return: the updated user
+        """
         user = self.get_by_id(id)
         if not user:
             raise ValidationException("User %s does not exist" % id)
@@ -74,6 +88,13 @@ class UserService:
             return self.repository.delete(db, id)
 
     def add_roles(self, id: int, role_ids: List[int]) -> Optional[UserDetailsDTO]:
+        """
+        Adds the given roles to a user.
+        The user to be updated and the given roles must exist
+        :param id: ID of the user to be updated
+        :param role_ids: List of role IDs to be added
+        :return: The updated user
+        """
         user = self.get_by_id(id)
         if not user:
             raise ValidationException("User %s does not exist" % id)
@@ -90,6 +111,13 @@ class UserService:
             return UserDetailsDTO.from_model(self.repository.add_roles(db, id, roles))
 
     def remove_roles(self, id: int, role_ids: List[int]) -> Optional[UserDetailsDTO]:
+        """
+        Removes the given roles from a user.
+        The user to be updated and the given roles must exist
+        :param id: ID of the user to be updated
+        :param role_ids: List of role IDs to be removed
+        :return: The updated user
+        """
         user = self.get_by_id(id)
         if not user:
             raise ValidationException("User %s does not exist" % id)
