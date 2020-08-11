@@ -29,7 +29,8 @@ class RightRepository:
         db.commit()
         return right
 
-    def update(self, db: Session, right: Right, data: RightUpdateDTO) -> Right:
+    def update(self, db: Session, id: int, data: RightUpdateDTO) -> Right:
+        right = self.get_by_id(db, id)
         right.name = data.name
         right.description = data.description
         right.modified_date_time = datetime.utcnow()
@@ -38,6 +39,7 @@ class RightRepository:
         db.refresh(right)
         return right
 
-    def delete(self, db: Session, right: Right) -> Any:
+    def delete(self, db: Session, id: int) -> Any:
+        right = self.get_by_id(db, id)
         db.delete(right)
         db.commit()

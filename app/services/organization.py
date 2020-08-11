@@ -19,11 +19,17 @@ class OrganizationService:
             orgs = self.repository.get_all(db)
             return [OrganizationDTO.from_model(i) for i in orgs]
 
-    def get_by_id(self, id: int) -> Optional[OrganizationDetailsDTO]:
+    def get_by_id(self, id: int) -> Optional[OrganizationDTO]:
         with db_session() as db:
             org = self.repository.get_by_id(db, id)
             if org:
-                return OrganizationDetailsDTO.from_model(org)
+                return OrganizationDTO.from_model(org)
+
+    def get_by_name(self, name: str) -> Optional[OrganizationDTO]:
+        with db_session() as db:
+            org = self.repository.get_by_name(db, name)
+            if org:
+                return OrganizationDTO.from_model(org)
 
     def get_details(self, id: int) -> Optional[OrganizationDetailsDTO]:
         with db_session() as db:
@@ -34,27 +40,41 @@ class OrganizationService:
             return OrganizationDetailsDTO.from_model(org)
 
     def create(self, data: OrganizationCreateDTO) -> Optional[OrganizationDetailsDTO]:
+        """
+        Creates a new organization if there is no other organization with thew given name
+        :param data: data required to create an organization
+        :return: the new organization
+        """
+        org = self.get_by_name(data.name)
+        if org:
+            raise ValidationException("Organization already exists with the name")
+
         with db_session() as db:
-            org = self.repository.get_by_name(db, data.name)
-            if org:
-                raise ValidationException("Organization already exists with the name")
             return OrganizationDetailsDTO.from_model(self.repository.create(db, data))
 
     def update(self, id: int, data: OrganizationUpdateDTO) -> Optional[OrganizationDetailsDTO]:
-        with db_session() as db:
-            org = self.repository.get_by_id(db, id)
-            if not org:
-                raise ValidationException("Organization %s does not exist" % id)
+        """
+        Updates an existing organization with the given data.
+        It also checks if the given name is available to be used.
+        :param id: ID of the organization to be updated
+        :param data: new organization data
+        :return: the updated organization
+        """
+        org = self.get_by_id(id)
+        if not org:
+            raise ValidationException("Organization %s does not exist" % id)
 
-            return OrganizationDetailsDTO.from_model(self.repository.update(db, org, data))
+        org_with_name = self.get_by_name(data.name)
+        if org_with_name and org_with_name.id != id:
+            raise ValidationException("Organization already exists with the name")
+
+        with db_session() as db:
+            return OrganizationDetailsDTO.from_model(self.repository.update(db, id, data))
 
     def delete(self, id: int) -> Any:
+        org = self.get_by_id(id)
+        if not org:
+            raise ValidationException("Organization %s does not exist" % id)
+
         with db_session() as db:
-            org = self.repository.get_by_id(db, id)
-            if not org:
-                raise ValidationException("Organization %s does not exist" % id)
-
-            return self.repository.delete(db, org)
-
-
-org_service = OrganizationService()
+            return self.repository.delete(db, id)

@@ -27,13 +27,15 @@ class OrganizationRepository:
         db.commit()
         return org
 
-    def update(self, db: Session, org: Organization, data: OrganizationUpdateDTO) -> Organization:
+    def update(self, db: Session, id: int, data: OrganizationUpdateDTO) -> Organization:
+        org = self.get_by_id(db, id)
         org.name = data.name
 
         db.commit()
         db.refresh(org)
         return org
 
-    def delete(self, db: Session, org: Organization) -> Any:
+    def delete(self, db: Session, id: int) -> Any:
+        org = self.get_by_id(db, id)
         db.delete(org)
         db.commit()

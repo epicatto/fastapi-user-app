@@ -33,7 +33,7 @@ def details(id: int, service: OrganizationService = Depends(get_service)) -> Org
 @router.delete("/{id}", name="organization-delete")
 def delete(id: int, service: OrganizationService = Depends(get_service)) -> Any:
     """
-    Delete organization.
+    Delete an organization.
     """
     return service.delete(id)
 
@@ -50,6 +50,6 @@ def create(data: OrganizationCreateDTO, service: OrganizationService = Depends(g
 def update(id: int, data: OrganizationUpdateDTO,
            service: OrganizationService = Depends(get_service)) -> OrganizationDetailsDTO:
     """
-    Update organization.
+    Update an organization.
     """
     return service.update(id, data)
