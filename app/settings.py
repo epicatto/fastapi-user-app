@@ -1,7 +1,6 @@
 from typing import Any, Dict, Optional
 
 from pydantic import BaseSettings, PostgresDsn, validator
-from sqlalchemy.util import portable_instancemethod
 
 
 class Settings(BaseSettings):
