@@ -14,7 +14,7 @@ from app.routers import roles
 from app.routers import users
 
 app = FastAPI(
-    title="FastAPI - Users sample application",
+    title="FastAPI - Users management sample application",
     description=""
 )
 

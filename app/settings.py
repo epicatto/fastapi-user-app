@@ -1,11 +1,13 @@
 from typing import Any, Dict, Optional
 
 from pydantic import BaseSettings, PostgresDsn, validator
+from sqlalchemy.util import portable_instancemethod
 
 
 class Settings(BaseSettings):
     DB_SCHEME: str
     DB_SERVER: str
+    DB_PORT: str
     DB_USER: str
     DB_PASSWORD: str
     DB_NAME: str
@@ -20,6 +22,7 @@ class Settings(BaseSettings):
         else:
             return PostgresDsn.build(
                 scheme=values.get("DB_SCHEME"),
+                port=values.get("DB_PORT"),
                 user=values.get("DB_USER"),
                 password=values.get("DB_PASSWORD"),
                 host=values.get("DB_SERVER"),

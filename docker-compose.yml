@@ -11,6 +11,7 @@ services:
     environment:
       DB_SCHEME: postgres
       DB_SERVER: db
+      DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: clave
       DB_NAME: fastapi_test
